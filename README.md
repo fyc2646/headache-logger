@@ -2,7 +2,9 @@
 
 A web-based application for tracking and analyzing headache experiences with detailed logging capabilities.
 
-![Headache Logger Demo](assets/demo.png)
+<p align="center">
+  <img src="assets/demo.png" width="600" alt="Headache Logger Demo">
+</p>
 
 ## Features
 
