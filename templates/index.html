@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headache Logger</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .form-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .log-card {
+            margin-bottom: 15px;
+        }
+        .severity-badge {
+            font-size: 1.2em;
+            padding: 5px 10px;
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="alertMessage" class="alert d-none"></div>
+    
+    <div class="container mt-4">
+        <h1 class="mb-4">Headache Logger</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h3>New Headache Log</h3>
+                    <form id="headacheForm">
+                        <!-- Basic Details -->
+                        <div class="mb-3">
+                            <label class="form-label">Duration <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="duration" required placeholder="e.g., 2 hours">
+                            <div class="form-text">Required. Example: "2 hours", "30 minutes"</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Severity (1-10) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="severity" min="1" max="10" required>
+                            <div class="form-text">Required. Rate from 1 (mild) to 10 (severe)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="location" required placeholder="e.g., left temple">
+                            <div class="form-text">Required. Example: "left temple", "forehead", "behind eyes"</div>
+                        </div>
+                        
+                        <!-- Triggers -->
+                        <h5 class="mt-4">Triggers (Optional)</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Food/Drink</label>
+                            <input type="text" class="form-control" name="food_drink" placeholder="Any notable food or drink">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stress Level</label>
+                            <select class="form-control" name="stress_level">
+                                <option value="">Select stress level</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Sleep Hours</label>
+                                    <input type="number" class="form-control" name="sleep_hours" step="0.5" placeholder="e.g., 7.5">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Sleep Quality</label>
+                                    <select class="form-control" name="sleep_quality">
+                                        <option value="">Select quality</option>
+                                        <option value="Poor">Poor</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Good">Good</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Weather</label>
+                            <input type="text" class="form-control" name="weather" placeholder="Weather conditions">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Screen Time</label>
+                            <input type="text" class="form-control" name="screen_time" placeholder="Amount of screen time">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Menstrual Cycle</label>
+                            <select class="form-control" name="menstrual">
+                                <option value="">Not applicable</option>
+                                <option value="During period">During period</option>
+                                <option value="Before period">Before period</option>
+                                <option value="After period">After period</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Symptoms -->
+                        <div class="mb-3">
+                            <label class="form-label">Symptoms</label>
+                            <textarea class="form-control" name="symptoms" rows="3" placeholder="Associated symptoms"></textarea>
+                        </div>
+                        
+                        <!-- Medication -->
+                        <div class="mb-3">
+                            <label class="form-label">Medication</label>
+                            <textarea class="form-control" name="medication" rows="2" placeholder="Medication taken, dosage"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Medication Effectiveness (1-10)</label>
+                            <input type="number" class="form-control" name="medication_effectiveness" min="1" max="10" placeholder="Rate from 1-10">
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-control" name="notes" rows="3" placeholder="Any additional notes"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Submit Log</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3>Previous Logs</h3>
+                        <button class="btn btn-success" onclick="exportLogs()">
+                            <i class="bi bi-download"></i> Export Logs
+                        </button>
+                    </div>
+                    <div id="logsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showAlert(message, type = 'danger') {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.classList.remove('d-none');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertDiv.classList.add('d-none');
+            }, 5000);
+        }
+
+        document.getElementById('headacheForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/log', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.message, 'success');
+                    e.target.reset();
+                    loadLogs();
+                } else {
+                    showAlert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error: Could not connect to server');
+            }
+        });
+
+        function getSeverityClass(severity) {
+            if (severity <= 3) return 'bg-success';
+            if (severity <= 6) return 'bg-warning';
+            return 'bg-danger';
+        }
+
+        async function loadLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const logs = await response.json();
+                
+                const logsHtml = logs.map(log => `
+                    <div class="card log-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">${new Date(log.timestamp).toLocaleString()}</h5>
+                                <div>
+                                    <span class="badge severity-badge ${getSeverityClass(log.severity)}">
+                                        Severity: ${log.severity}
+                                    </span>
+                                    <button class="btn btn-sm btn-danger ms-2" onclick="deleteLog(${log.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                <strong>Duration:</strong> ${log.duration}<br>
+                                <strong>Location:</strong> ${log.location}<br>
+                                ${log.symptoms ? `<strong>Symptoms:</strong> ${log.symptoms}<br>` : ''}
+                                ${log.medication ? `<strong>Medication:</strong> ${log.medication}<br>` : ''}
+                                ${log.notes ? `<strong>Notes:</strong> ${log.notes}` : ''}
+                            </p>
+                            <button class="btn btn-sm btn-outline-primary" onclick="toggleDetails(this)">
+                                Show Details
+                            </button>
+                            <div class="additional-details" style="display: none; margin-top: 10px;">
+                                <strong>Triggers:</strong><br>
+                                ${log.food_drink ? `- Food/Drink: ${log.food_drink}<br>` : ''}
+                                ${log.stress_level ? `- Stress Level: ${log.stress_level}<br>` : ''}
+                                ${log.sleep_hours ? `- Sleep: ${log.sleep_hours} hours (${log.sleep_quality})<br>` : ''}
+                                ${log.weather ? `- Weather: ${log.weather}<br>` : ''}
+                                ${log.screen_time ? `- Screen Time: ${log.screen_time}<br>` : ''}
+                                ${log.menstrual ? `- Menstrual: ${log.menstrual}<br>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('logsList').innerHTML = logsHtml || '<p class="text-muted">No logs yet</p>';
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error loading logs');
+            }
+        }
+
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            const isHidden = details.style.display === 'none';
+            details.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? 'Hide Details' : 'Show Details';
+        }
+
+        async function deleteLog(logId) {
+            if (!confirm('Are you sure you want to delete this log?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/log/${logId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showAlert('Log deleted successfully', 'success');
+                    loadLogs();
+                } else {
+                    const result = await response.json();
+                    showAlert(result.message || 'Error deleting log');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error deleting log');
+            }
+        }
+
+        function exportLogs() {
+            window.location.href = '/api/export';
+        }
+
+        // Load logs when page loads
+        loadLogs();
+    </script>
+</body>
+</html>
