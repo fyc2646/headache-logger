@@ -1,9 +1,11 @@
 # Headache Logger
 
-A web-based application for tracking and analyzing headache experiences with detailed logging capabilities.
+A web-based application for tracking and analyzing headache experiences with detailed logging capabilities. 
+
+Do you suffer from headaches like I do? This project is designed to help you log your headache experiences, track patterns, and gain insights into your headache patterns. Whether you're a patient or a healthcare professional, this app provides a user-friendly interface to capture and manage headache logs. You can analyze your headache patterns and make informed decisions about your well-being.
 
 <p align="center">
-  <img src="assets/demo.png" width="600" alt="Headache Logger Demo">
+  <img src="assets/demo.png" width="400" alt="Headache Logger Demo">
 </p>
 
 ## Features
